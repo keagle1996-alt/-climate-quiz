@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="기온과 강수량 그래프를 읽고 쾨펜 1차 기후대를 판별하는 초등 6학년용 퀴즈">
+  <title>기후 탐정단! — 쾨펜 1차 기후대 퀴즈</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div class="page-doodles" aria-hidden="true">
+    <span class="doodle doodle-one"></span>
+    <span class="doodle doodle-two"></span>
+    <span class="doodle doodle-three"></span>
+  </div>
+
+  <main class="app-shell">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow"><span>쾨펜 A–E</span> 그래프 수사대</p>
+        <h1>기후 탐정단!</h1>
+        <p class="title-note">기온선 + 강수 막대 속 단서를 찾아라</p>
+      </div>
+      <div class="topbar-actions">
+        <button class="music-button" id="music-button" type="button" aria-pressed="false">
+          <span class="music-icon" aria-hidden="true">♪</span>
+          <span id="music-label">BGM 켜기</span>
+        </button>
+        <button class="notebook-button" id="guide-button" type="button" aria-expanded="false" aria-controls="guide-panel">
+          판별 쪽지 <span aria-hidden="true">↗</span>
+        </button>
+      </div>
+    </header>
+
+    <aside class="guide-panel" id="guide-panel" hidden>
+      <div class="guide-heading">
+        <div>
+          <p class="mini-kicker">탐정 수첩</p>
+          <h2>1차 기후대 판별 기준</h2>
+        </div>
+        <button class="icon-button" id="guide-close" type="button" aria-label="판별 쪽지 닫기">×</button>
+      </div>
+      <ol class="detective-order">
+        <li><strong>B 건조</strong><span>비가 지나치게 적은지 먼저 확인!</span></li>
+        <li><strong>A 열대</strong><span>가장 추운 달도 18℃ 이상</span></li>
+        <li><strong>E 한대</strong><span>가장 더운 달도 10℃ 미만</span></li>
+        <li><strong>C 온대</strong><span>가장 추운 달이 0℃ 이상 18℃ 미만</span></li>
+        <li><strong>D 냉대</strong><span>가장 추운 달은 0℃ 미만, 더운 달은 10℃ 이상</span></li>
+      </ol>
+      <p class="guide-footnote">※ 경계에서 멀리 떨어진 자료를 사용한 수업용 기준입니다. C·D 경계는 0℃ 기준으로 판별해요.</p>
+    </aside>
+
+    <section class="screen start-screen is-active" id="start-screen" aria-labelledby="start-title">
+      <div class="start-copy comic-panel">
+        <span class="burst-label">사건 발생!</span>
+        <h2 id="start-title">수상한 그래프 <em>10개</em>가 나타났다!</h2>
+        <p class="lead">파란 막대는 <strong>강수량</strong>, 빨간 선은 <strong>기온</strong>이에요. 두 단서를 함께 보고 A~E 기후대를 밝혀 보세요.</p>
+
+        <div class="mission-box">
+          <p><span aria-hidden="true">✎</span> 정답만 찍으면 사건 해결 실패!</p>
+          <p>기후대를 고른 뒤 <strong>그래프에서 찾은 이유를 8글자 이상</strong> 꼭 써야 제출할 수 있어요.</p>
+        </div>
+
+        <div class="student-fields">
+          <label>
+            <span>이름 <small>(선택)</small></span>
+            <input id="student-name" type="text" maxlength="12" autocomplete="off" placeholder="기후 탐정">
+          </label>
+          <label>
+            <span>번호 <small>(선택)</small></span>
+            <input id="student-number" type="text" inputmode="numeric" maxlength="3" autocomplete="off" placeholder="7">
+          </label>
+        </div>
+
+        <button class="primary-button start-button" id="start-button" type="button">
+          탐정 출동! <span aria-hidden="true">→</span>
+        </button>
+      </div>
+
+      <div class="climate-board" aria-label="다섯 가지 1차 기후대">
+        <p class="board-title">용의자 명단</p>
+        <div class="suspect suspect-a"><b>A</b><span>열대</span><small>늘 따뜻해!</small></div>
+        <div class="suspect suspect-b"><b>B</b><span>건조</span><small>비가 너무 적어!</small></div>
+        <div class="suspect suspect-c"><b>C</b><span>온대</span><small>겨울도 비교적 온화!</small></div>
+        <div class="suspect suspect-d"><b>D</b><span>냉대</span><small>겨울은 영하!</small></div>
+        <div class="suspect suspect-e"><b>E</b><span>한대</span><small>여름도 서늘!</small></div>
+        <div class="board-scribble" aria-hidden="true">흠… 누구지?</div>
+      </div>
+    </section>
+
+    <section class="screen quiz-screen" id="quiz-screen" aria-labelledby="case-title">
+      <div class="quiz-status">
+        <div class="case-count"><span id="current-number">1</span> / <span id="total-number">10</span> 사건</div>
+        <div class="progress-track" aria-label="퀴즈 진행률">
+          <span id="progress-fill"></span>
+        </div>
+        <div class="streak-badge">연속 정답 <b id="streak-count">0</b></div>
+      </div>
+
+      <div class="case-heading">
+        <div>
+          <p class="mini-kicker" id="case-label">사건 파일 01</p>
+          <h2 id="case-title">이 지역의 1차 기후대는?</h2>
+        </div>
+        <p class="speech-bubble">오호~ 그래프에 단서가 다 있군!</p>
+      </div>
+
+      <div class="quiz-layout">
+        <article class="graph-card">
+          <div class="graph-topline">
+            <div class="legend" aria-label="그래프 범례">
+              <span><i class="legend-bar"></i>월 강수량(mm)</span>
+              <span><i class="legend-line"></i>월평균 기온(℃)</span>
+            </div>
+            <span class="hemisphere-tag">북반구 · 수업용 가상 자료</span>
+          </div>
+          <div class="chart-scroller">
+            <svg id="climograph" viewBox="0 0 760 430" role="img" aria-labelledby="chart-title chart-desc"></svg>
+          </div>
+          <details class="data-details">
+            <summary>월별 수치도 확인하기</summary>
+            <div class="table-scroller">
+              <table>
+                <caption class="sr-only">월별 기온과 강수량 수치</caption>
+                <thead id="data-head"></thead>
+                <tbody id="data-body"></tbody>
+              </table>
+            </div>
+          </details>
+        </article>
+
+        <form class="answer-card" id="answer-form" novalidate>
+          <fieldset id="climate-options">
+            <legend>① 기후대를 골라요</legend>
+            <div class="option-grid">
+              <label class="answer-option option-a">
+                <input type="radio" name="climate" value="A">
+                <span class="option-letter">A</span><span class="option-name">열대</span>
+              </label>
+              <label class="answer-option option-b">
+                <input type="radio" name="climate" value="B">
+                <span class="option-letter">B</span><span class="option-name">건조</span>
+              </label>
+              <label class="answer-option option-c">
+                <input type="radio" name="climate" value="C">
+                <span class="option-letter">C</span><span class="option-name">온대</span>
+              </label>
+              <label class="answer-option option-d">
+                <input type="radio" name="climate" value="D">
+                <span class="option-letter">D</span><span class="option-name">냉대</span>
+              </label>
+              <label class="answer-option option-e">
+                <input type="radio" name="climate" value="E">
+                <span class="option-letter">E</span><span class="option-name">한대</span>
+              </label>
+            </div>
+          </fieldset>
+
+          <div class="reason-field">
+            <label for="reason-input">② 그래프에서 찾은 이유를 써요 <b>필수!</b></label>
+            <textarea id="reason-input" rows="5" minlength="8" maxlength="180" placeholder="예) 가장 추운 달의 기온도 ○℃ 이상이고, 강수량은 …"></textarea>
+            <div class="reason-help">
+              <span>기온의 최댓값·최솟값 또는 강수량 특징을 근거로 써 보세요.</span>
+              <span><b id="reason-count">0</b>/180</span>
+            </div>
+          </div>
+
+          <p class="form-message" id="form-message" role="alert"></p>
+          <button class="primary-button submit-button" id="submit-button" type="submit" disabled>
+            정답 제출! <span aria-hidden="true">✓</span>
+          </button>
+
+          <section class="feedback-card" id="feedback-card" aria-live="polite" hidden>
+            <p class="feedback-verdict" id="feedback-verdict"></p>
+            <p class="feedback-answer" id="feedback-answer"></p>
+            <div class="model-reason">
+              <span>모범 근거</span>
+              <p id="model-reason-text"></p>
+            </div>
+            <div class="representative-region">
+              <span>비슷한 대표 지역</span>
+              <p id="representative-region-text"></p>
+            </div>
+            <p class="teacher-note">쓴 이유는 결과지에 그대로 남아요. 모범 근거와 비교해 보세요.</p>
+            <button class="next-button" id="next-button" type="button">다음 사건 <span aria-hidden="true">→</span></button>
+          </section>
+        </form>
+      </div>
+    </section>
+
+    <section class="screen result-screen" id="result-screen" aria-labelledby="result-title">
+      <div class="result-hero comic-panel">
+        <span class="burst-label">수사 완료!</span>
+        <p class="result-name" id="result-name">기후 탐정</p>
+        <h2 id="result-title"><strong id="score-number">0</strong><span>/10</span> 사건 해결</h2>
+        <p id="rank-message"></p>
+        <div class="score-ribbon">
+          <span>기후대 정답률 <b id="accuracy-number">0%</b></span>
+          <span>근거 작성 <b id="reason-complete">10/10</b></span>
+        </div>
+        <div class="result-actions">
+          <button class="primary-button" id="retry-button" type="button">새로 도전</button>
+          <button class="secondary-button" id="print-button" type="button">결과지 인쇄</button>
+        </div>
+      </div>
+
+      <div class="review-section">
+        <div class="review-heading">
+          <div>
+            <p class="mini-kicker">수사 기록</p>
+            <h3>내 답과 근거 돌아보기</h3>
+          </div>
+          <p>근거 문장의 적절성은 선생님이 확인해 주세요.</p>
+        </div>
+        <div id="review-list" class="review-list"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer>기후 탐정단 · 쾨펜 1차 기후대(A~E) 연습</footer>
+  <script src="./app.js"></script>
+</body>
+</html>
